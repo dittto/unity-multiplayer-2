@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace Player.SyncedData {
     public class LocalPlayerDataStore {
+
         private static LocalPlayerDataStore instance;
-        
-        public Color playerColour; 
+
+        public Color playerColour;
 
         private LocalPlayerDataStore () { }
 

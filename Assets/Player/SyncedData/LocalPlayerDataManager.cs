@@ -19,7 +19,7 @@ namespace Player.SyncedData {
             clientData.OnColourUpdated += OnPlayerColourUpdated;
         }
 
-        public void OnPlayerColourUpdated (Color newColour)
+        public void OnPlayerColourUpdated (GameObject player, Color newColour)
         {
             LocalPlayerDataStore.GetInstance().playerColour = newColour;
         }

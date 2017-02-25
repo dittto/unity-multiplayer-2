@@ -6,20 +6,24 @@ using UnityEngine.Networking;
 namespace Player.SyncedData {
     public class PlayerDataForClients : NetworkBehaviour {
 
-        public delegate void ColourUpdated (Color newColour);
+        public delegate void ColourUpdated (GameObject player, Color newColour);
         public event ColourUpdated OnColourUpdated;
 
         [SyncVar(hook = "UpdateColour")]
         private Color colour;
 
-        // use this for re-triggering the hooks on scene load
         public override void OnStartClient ()
         {
             // don't update for local player as handled by LocalPlayerOptionsManager
-            // don't update for server as only the clients need this
+            // don't update for server as the server will know on Command call from local player
             if (!isLocalPlayer && !isServer) {
                 UpdateColour(colour);
             }
+        }
+
+        public Color GetColour ()
+        {
+            return colour;
         }
 
         [Client]
@@ -39,9 +43,8 @@ namespace Player.SyncedData {
         {
             colour = newColour;
             GetComponentInChildren<MeshRenderer>().material.color = newColour;
-
             if (this.OnColourUpdated != null) {
-                this.OnColourUpdated(newColour);
+                this.OnColourUpdated(gameObject, newColour);
             }
         }
     }
