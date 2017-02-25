@@ -5,47 +5,43 @@ using UnityEngine.Networking;
 
 namespace Player.SyncedData {
     public class PlayerDataForClients : NetworkBehaviour {
-        public delegate void PlayerColourUpdated (Color newColour);
-        public event PlayerColourUpdated OnPlayerColourUpdated;
 
-        [SyncVar(hook = "UpdatePlayerColour")]
-        private Color playerColour;
+        public delegate void ColourUpdated (Color newColour);
+        public event ColourUpdated OnColourUpdated;
+
+        [SyncVar(hook = "UpdateColour")]
+        private Color colour;
 
         // use this for re-triggering the hooks on scene load
-        public override void OnStartClient()
+        public override void OnStartClient ()
         {
-            base.OnStartClient();
             // don't update for local player as handled by LocalPlayerOptionsManager
             // don't update for server as only the clients need this
             if (!isLocalPlayer && !isServer) {
-                UpdatePlayerColour(playerColour);
+                UpdateColour(colour);
             }
         }
 
-        // use draw.io to create diagram for this pattern
-
-        // also use draw.io to create diagram for showing how all 3 synced options work together when a scene loads
-
         [Client]
-        public void SetPlayerColour(Color newColour)
+        public void SetColour (Color newColour)
         {
-            CmdSetPlayerColour(newColour);
+            CmdSetColour(newColour);
         }
 
         [Command]
-        public void CmdSetPlayerColour(Color newColour)
+        public void CmdSetColour (Color newColour)
         {
-            playerColour = newColour;
+            colour = newColour;
         }
 
         [Client]
-        public void UpdatePlayerColour(Color newColour)
+        public void UpdateColour (Color newColour)
         {
-            playerColour = newColour;
+            colour = newColour;
             GetComponentInChildren<MeshRenderer>().material.color = newColour;
 
-            if (this.OnPlayerColourUpdated != null) {
-                this.OnPlayerColourUpdated(newColour);
+            if (this.OnColourUpdated != null) {
+                this.OnColourUpdated(newColour);
             }
         }
     }
